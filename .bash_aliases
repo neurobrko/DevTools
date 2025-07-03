@@ -20,31 +20,31 @@ e_warn() {
 }
 
 docker_start_stop() {
-    local cname="$1"
-    if [ -z "$cname" ]; then
-        e_info "Usage: docker_toggle <container_name_or_id>"
-        return 1
-    fi
-    state=$(docker inspect -f '{{.State.Status}}' "$cname" 2>/dev/null)
-    case $state in
-        "running")
-            docker stop "$cname"
-            e_info "Container '$cname' stopped."
-            ;;
-        "exited")
-            docker start "$cname"
-            e_info "Container '$cname' started."
-            ;;
-        *)
-            e_err "Container '$cname' not found or not in a valid state."
-            return 1
-            ;;
-    esac
+  local cname="$1"
+  if [ -z "$cname" ]; then
+    e_info "Usage: docker_toggle <container_name_or_id>"
+    return 1
+  fi
+  state=$(docker inspect -f '{{.State.Status}}' "$cname" 2>/dev/null)
+  case $state in
+  "running")
+    docker stop "$cname"
+    e_info "Container '$cname' stopped."
+    ;;
+  "exited")
+    docker start "$cname"
+    e_info "Container '$cname' started."
+    ;;
+  *)
+    e_err "Container '$cname' not found or not in a valid state."
+    return 1
+    ;;
+  esac
 }
 
 docker_stop_all() {
   for cont in $(docker ps -a --format {{.Names}}); do
-    docker stop $cont > /dev/null
+    docker stop $cont >/dev/null
     e_info "Container $cont stopped."
   done
 }
@@ -56,14 +56,14 @@ docker_remove() {
 
 docker_remove_all() {
   for cont in $(docker ps -a --format {{.Names}}); do
-    docker rm $cont > /dev/null
+    docker rm $cont >/dev/null
     e_info "Container $cont removed."
   done
 }
 
 docker_remove_all_images() {
   for img in $(docker image ls --format '{{.Repository}}:{{.Tag}}'); do
-    docker image rm $img > /dev/null
+    docker image rm $img >/dev/null
     e_info "Image $img removed."
   done
 }
@@ -88,7 +88,7 @@ fill_line_with_string() {
     beg_char="${fill:0:1}"
     end_char="${fill:0:1}"
   fi
-  local padding=$(( (length - ${#string} - 2) / 2 ))
+  local padding=$(((length - ${#string} - 2) / 2))
   local beg=$(printf "%${padding}s" | tr ' ' "$beg_char")
   local end=$(printf "%${padding}s" | tr ' ' "$end_char")
   printf "%s%s%s" "$beg" "" " $string " "$end" ""
@@ -121,7 +121,7 @@ get_alias_descriptions() {
         alias_name=$(printf "%5s" $(echo "$line" | cut -d'=' -f1 | awk '{print $2}'))
         echo "$alias_name :: $description"
       fi
-    done < "$file_path"
+    done <"$file_path"
   fi
 }
 
@@ -153,20 +153,20 @@ edit_aliases() {
     ea_help
   else
     case "$1" in
-      l)
-        nano ~/.local_aliases
-        ;;
-      c)
-        nano ~/.custom_aliases
-        ;;
-      h)
-        ea_help
-        ;;
-      *)
-        e_warn "Invalid option!"
-        ea_help
-        ;;
-    esac  
+    l)
+      nano ~/.local_aliases
+      ;;
+    c)
+      nano ~/.custom_aliases
+      ;;
+    h)
+      ea_help
+      ;;
+    *)
+      e_warn "Invalid option!"
+      ea_help
+      ;;
+    esac
   fi
 }
 
@@ -215,14 +215,14 @@ alias dria=docker_remove_all_images
 # If you remotly update .bash_aliases from your machine using setup_VM.sh,
 # it won't override local changes.
 if [ -f ~/.local_aliases ]; then
-    . ~/.local_aliases
+  . ~/.local_aliases
 fi
 if [ -f ~/.custom_aliases ]; then
-    . ~/.custom_aliases
+  . ~/.custom_aliases
 fi
 
 # alter bash prompt (no username, shorter hostname, host part of IP, top dir only, colors)
-short_hostname=$(awk -F'-' '{print "S-" $4 "-" $NF}' <<< $(hostname))
+short_hostname=$(awk -F'-' '{for(i=1;i<=NF;i++) if($i ~ /^[0-9]{4}$/) print "S-" $i "-" $(NF)}' <<<$(hostname))
 ip_hostpart=$(show_ip | awk -F. '{print $NF}')
 
 export PS1='\[\e[1;32m\]\[$(echo $short_hostname)\] \[\e[1;30m\](\[$(echo $ip_hostpart)\])\[\e[1;32m\]\[\e[0m\]:\[\e[1;34m\]\W\[\e[0m\]\$ '
