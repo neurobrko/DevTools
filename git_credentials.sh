@@ -2,16 +2,6 @@
 
 # Script to change current git credentials
 
-# credentials are stored in external file in script directory
-# content:
-#
-#   declare -A profiles
-#   profiles[0]="alias;username;user@example.com"
-#   profiles[1]="alias;username;user@example.com"
-#   ...
-#
-source .git_profiles.sh
-
 # Usage display
 usage() {
   echo "Usage: $0 [-c] [-p] [-s <profile_key>]"
@@ -20,6 +10,22 @@ usage() {
   echo "       -s set credentials (requires profile key)"
   exit 1
 }
+
+if [ $# -eq 0 ]; then
+  echo "No option provided!"
+  usage
+fi
+
+# credentials are stored in external file in script directory
+# content:
+#
+#   declare -A profiles
+#   profiles[0]="alias;username;user@example.com"
+#   profiles[1]="alias;username;user@example.com"
+#   ...
+#
+SCRIPT_DIR="$(dirname "${BASH_SOURCE[0]}")"
+source "$SCRIPT_DIR/.git_profiles.sh"
 
 show_credentials() {
   echo "*** Current GIT credentials ***"
