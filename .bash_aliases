@@ -170,26 +170,40 @@ edit_aliases() {
   fi
 }
 
+get_line_word() {
+  # get single word ($2) from line ($1) of output
+  # get line-numbered output with 'cmd | nl'
+  echo $(sed -n "${1}p" | awk "{print \$$2}")
+}
+
 ### General aliases
 # ll in human readable format
 alias lh='ls -lah'
 # du all items in folder, human readable
 alias dh='du -chs *'
+# cd to $BASE_DIR
+alias cdb='cd /var/local/virl2/'
+# cd to virl2 log dir
+alias cdl='cd /var/log/virl2'
+# cd to site_packages
+alias cds='cd /var/local/virl2/.local/lib/python3.12/site-packages'
 # print alias descriptions
 alias h=display_alias_descriptions
 # source ~/.bash_aliases
 alias sa='source ~/.bash_aliases'
 # edit aliases files ('ea h' for help)
 alias ea=edit_aliases
+# get single word from output
+alias lw=get_line_word
 ### Development aliases
-# journal controller, no hostname, follow
-alias jvc='journalctl -f --no-hostname -u controller.service'
+# journal virl2 controller, no hostname, follow
+alias jvc='journalctl -f --no-hostname -u virl2-controller.service'
 # full journal, no hostname, follow
 alias j='journalctl -f --no-hostname'
-# open file sqlite DB
-alias dbc='sqlite3 -table /path/to/file.db'
-# restart service target
-alias rvt='systemctl restart service.target'
+# open controller sqlite DB
+alias dbc='sqlite3 -table /var/local/virl2/config/controller.db'
+# restart virl2 target
+alias rvt='systemctl restart virl2.target'
 # show bridge0 IP address
 alias sip=show_ip
 ### Docker aliases

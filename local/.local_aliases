@@ -1,0 +1,44 @@
+#!/bin/sh
+
+# This file contains local functions and aliases for CML projects
+
+setup_VM() {
+  # Fix this with use of $# and shift and shit like that!
+  local port=$(printf "%03d" $1)
+  /home/marpauli/code/DevTools/setup_VM.sh -i "$port" -a "$2"
+}
+
+# local UI debugging
+fe_debug() {
+  if [ "$1" != "" ]; then
+    local port=$(printf "%03d" $1)
+    cd /home/marpauli/code/cisco/_SIMPLE/ui || exit
+    VITE_CML_PROXY_BACKEND_SERVER=https://10.122.58.49:12$port yarn dev
+  else
+    e_err "No port number provided!"
+  fi
+}
+
+ssh_tunnel() {
+  local port=$(printf "%03d" $1)
+  echo "New terminal window will be open and ssh tunnel will be established..."
+  echo "Do NOT close the window until debugging is finished!"
+  sleep 3
+  gnome-terminal -- bash -c "ssh -p 13$port -L 5678:localhost:5678 root@10.122.58.49"
+}
+
+### Cisco Dev aliases
+# cd to <cisco> directory
+alias cdc='cd /home/marpauli/code/cisco'
+# cd to <repo> directory
+alias cdr='cd /home/marpauli/code/cisco/_SIMPLE'
+# cd to <repo>/ui directory
+alias cdu='cd /home/marpauli/code/cisco/_SIMPLE/ui'
+# get cisco VPN ip address
+alias gip='/home/marpauli/code/DevTools/get_ip.sh'
+# ssh tunnel on 5678 (debugger) 'st <VMport>'
+alias st='ssh_tunnel'
+# front-end debugging
+alias fd='fe_debug'
+# autheticate mock CML server
+alias amock='/home/marpauli/code/DevTools/auth_mock.sh'

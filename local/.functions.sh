@@ -1,6 +1,6 @@
-#!/bin/bash
+#!/bin/zsh
 
-# alias neovim, so it can be used in .bash_aliases straight away
+# alias neovim, so it can be used in .aliases straight away
 # and won't mess aliases help
 alias nv='/home/marpauli/data/soft/nvim-linux-x86_64/bin/nvim'
 
@@ -91,35 +91,42 @@ get_alias_descriptions() {
 display_alias_descriptions() {
   echo ""
   fill_line_with_string "BASH ALIASES DESCRIPTIONS" "$line_length" " "
-  get_alias_descriptions ~/.bash_aliases
-  get_alias_descriptions ~/.local_aliases
-  get_alias_descriptions ~/.custom_aliases
+  get_alias_descriptions ~/.config/aliases/.aliases
+  if [ -n "$BASH_VERSION" ]; then
+    get_alias_descriptions ~/.config/aliases/.git_aliases
+  fi
+  get_alias_descriptions ~/.config/aliases/.local_aliases
+  get_alias_descriptions ~/.config/aliases/.custom_aliases
   fill_line "$line_length" "-"
 }
 
-# edit aliases help
+#edit aliases help
 ea_help() {
   e_info "Usage: ea [c|l|h]"
-  echo "Edit ~/.bash_aliases file when used without arguments"
-  echo "Args: c :: edit ~/.custom_aliases"
-  echo "      l :: edit ~/.local_aliases"
+  echo "Edit ~/.config/aliases/.aliases file when used without arguments"
+  echo "Args: c :: edit ~/.config/aliases/.custom_aliases"
+  echo "      l :: edit ~/.config/aliases/.local_aliases"
+  echo "      f "" edit ~/.config/aliases/.functions.sh"
   echo "      h :: print help"
 }
 
 # edit aliases files
 edit_aliases() {
   if [ $# -eq 0 ]; then
-    nv ~/.bash_aliases
+    nv ~/.config/aliases/.aliases
   elif [ $# -gt 1 ]; then
     e_err "Too many arguments!"
     ea_help
   else
     case "$1" in
     l)
-      nv ~/.local_aliases
+      nv ~/.config/aliases/.local_aliases
       ;;
     c)
-      nv ~/.custom_aliases
+      nv ~/.config/aliases/.custom_aliases
+      ;;
+    f)
+      nv ~/.config/aliases/.functions.sh
       ;;
     h)
       ea_help
@@ -129,105 +136,6 @@ edit_aliases() {
       ea_help
       ;;
     esac
-  fi
-}
-# GIT FUNCTIONS
-# git diff with optional filename from git diff --names-only | nl
-git_diff_numbered() {
-  if [ $# -eq 0 ]; then
-    git diff
-  elif [ $# -eq 1 ]; then
-    if [[ $1 =~ ^[0-9]+$ ]]; then
-      local file
-      file=$(git diff --name-only | nl | awk -v num="$1" '$1 == num {print $2}')
-      git diff "$file"
-    elif [[ $1 == "n" ]]; then
-      git diff --name-only | nl
-    fi
-  fi
-}
-
-# git checkout with tab completion
-gc() {
-  git checkout "$@"
-}
-# Enable git completion if available
-if [ -f /usr/share/bash-completion/completions/git ]; then
-  . /usr/share/bash-completion/completions/git
-fi
-# Enable git branch completion for gc
-if type __git_complete &>/dev/null; then
-  __git_complete gc _git_checkout
-fi
-
-# git add untracked files, commit and push
-git_commit_push() {
-  if [ -z "$1" ]; then
-    e_err "No commit message provided!"
-    return 1
-  else
-    local message="$*"
-    git add .
-    git commit -m "$message"
-    git push
-    e_succ -e "\nCommit '$message' succesfully pushed to branch: '$(git branch --show-current)'."
-  fi
-}
-
-# git create stast with message
-git_stash_msg() {
-  if [ -z "$1" ]; then
-    e_warn "Stash changes with message! Don't be lazy..."
-  else
-    local msg="$*"
-    git stash -m "$msg"
-    e_succ "Succesfully stashed changes as '$msg' on branch '$(git branch --show-current)'."
-  fi
-}
-
-# git apply stash by number
-git_apply_stash() {
-  if [ $# -eq 0 ]; then
-    e_warn "Please specify stash number!"
-    return 1
-  elif [ $# -gt 1 ]; then
-    e_warn "Please specify only one stash number!"
-    return 1
-  else
-    git stash apply stash@"{$1}"
-  fi
-}
-
-# git echo stasth diff by number
-# useful combined with '| xc'
-git_stash_patch() {
-  if [ $# -eq 0 ]; then
-    e_warn "Please specify a stash number!"
-    return 1
-  elif [ $# -gt 1 ]; then
-    e_warn "Please specify only one stash number!"
-    return 1
-  else
-    git stash show -p stash@"{$1}"
-  fi
-}
-
-# drop stash by number with confirmation
-# I accidentally dropped stashes, because I mix up gsp and gsd
-git_stash_drop() {
-  if [ $# -eq 0 ]; then
-    e_warn "Please specify a stash number!"
-    return 1
-  elif [ $# -gt 1 ]; then
-    e_warn "Please specify only one stash number!"
-    return 1
-  else
-    read -rp "Are you sure you want to drop stash #$1? (y/N): " confirm
-    if [[ "$confirm" =~ ^[yY]$ ]]; then
-      git stash drop stash@"{$1}"
-    fi
-    e_warn "Stash #$1 not dropped."
-    return 0
   fi
 }
 
