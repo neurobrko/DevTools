@@ -28,26 +28,26 @@ port_number=""
 # Parse CLI arguments
 while getopts ":i:ad" opt; do
   case ${opt} in
-    i )
-      ip_device=$OPTARG
-      ;;
-    a )
-      flag_a=true
-      ;;
-    d )
-      flag_d=true
-      ;;
-    \? )
-      echo "Invalid option: -$OPTARG" 1>&2
-      usage
-      ;;
-    : )
-      echo "Invalid option: -$OPTARG requires an argument" 1>&2
-      usage
-      ;;
+  i)
+    ip_device=$OPTARG
+    ;;
+  a)
+    flag_a=true
+    ;;
+  d)
+    flag_d=true
+    ;;
+  \?)
+    echo "Invalid option: -$OPTARG" 1>&2
+    usage
+    ;;
+  :)
+    echo "Invalid option: -$OPTARG requires an argument" 1>&2
+    usage
+    ;;
   esac
 done
-shift $((OPTIND -1))
+shift $((OPTIND - 1))
 
 if [ -z $ip_device ]; then
   echo "Error: -i argument is mandatory!"
@@ -65,7 +65,7 @@ pycharm_debugger="/snap/pycharm-professional/393/debug-eggs/pydevd-pycharm.egg"
 # copy functions
 copy_aliases() {
   # copy .bash_aliases from sscript dir to VM
-  scp -P $port .bash_aliases $credentials:~
+  scp -P $port $(dirname "$0")/.bash_aliases $credentials:~
 }
 
 copy_debugger() {
