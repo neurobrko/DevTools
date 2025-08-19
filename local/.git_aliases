@@ -69,14 +69,28 @@ git_stash_drop() {
 # git diff with optional filename from git diff --names-only | nl
 git_diff_numbered() {
   local files file
-  files=$(git diff --name-only)
+  files=($(git diff --name-only))
   if [ $# -eq 0 ]; then
     printf "%s\n" "${files[@]}" | nl
   elif [ $# -eq 1 ] && [[ $1 =~ ^[0-9]+$ ]]; then
-    file="${files[$1]}"
+    if [ -n "$BASH_VERSION" ]; then
+      file="${files[$1 - 1]}"
+    else
+      file="${files[$1]}"
+    fi
     [ -n "$file" ] && git diff "$file"
   fi
 }
+# git_diff_numbered() {
+#   local files file
+#   files=$(git diff --name-only)
+#   if [ $# -eq 0 ]; then
+#     printf "%s\n" "${files[@]}" | nl
+#   elif [ $# -eq 1 ] && [[ $1 =~ ^[0-9]+$ ]]; then
+#     file="${files[$1]}"
+#     [ -n "$file" ] && git diff "$file"
+#   fi
+# }
 
 # git add untracked files, commit and push
 git_commit_push() {
