@@ -5,7 +5,7 @@
 author: *Marek Paulík*
 
 > **DISCLAIMER:**\
-> Most of this scripts are make-dos with some caviates and are not working 100% without error. They were mostly made in a rush and are constantly improved...
+> Most of these scripts are makeshift with some caveats and are not working 100% without error. They were mostly made in a rush and are constantly improved...
 
 **Best way to utilize these scripts is to make some useful aliases on your local system.**
 
@@ -68,7 +68,7 @@ For example, if you press `h`, you get aliases description:
 ------------------------------------------------------------
 ```
 
-There is also a alternative display of prompt (without username, hostname is shorted and host part of bridge0 IP is in parethesis, dispalying only top directory and some colors):
+There is also a alternative display of prompt (without username, hostname is shorted and host part of bridge0 IP is in parenthesis, displaying only top directory and some colors):
 `S-7881-C0 (165):site-packages#`\
 `gc` alias for `git checkout` also work with `TAB` completion!
 
@@ -87,11 +87,12 @@ As mentioned before, best way to use these scripts is to create some local alias
 
 ```
                  BASH ALIASES DESCRIPTIONS                 
+
 @ /home/marpauli/.config/aliases/.aliases
 --------------------- General aliases ---------------------
     ll :: ll
     lh :: ll in human readable format
-    dh :: du all items in folder, human readable
+    dh :: du all items in folder, human readable 
      g :: grep shorthand
     py :: python 3.12 interpreter/REPL
     sq :: sqlite3 with --table
@@ -107,7 +108,7 @@ As mentioned before, best way to use these scripts is to create some local alias
    rfm :: SyncSuite file map
    tpc :: Test Path Convertor tool
    rmt :: run multiple tests silently from 'paths' file
-  rmte :: edit 'paths' file from 'rmt'
+  rmte :: edit 'paths' file for 'rmt'
     pc :: run pre-commit on changed files only
 -------------------- Remote VM aliases --------------------
      s :: ssh to VM
@@ -116,16 +117,16 @@ As mentioned before, best way to use these scripts is to create some local alias
 
 @ /home/marpauli/.config/aliases/.git_aliases
 ----------------------- Git aliases -----------------------
-    gi :: git status
-    gd :: git diff (n files with #, <#> single file)
-    gf :: git fetch all
-    gc :: git checkout with tab completion
-   gcp :: git commit and push with message
+   gst :: git status
+   gfa :: git fetch all
+    gd :: git diff
+   gdn :: git diff numbered (with filenum works only in repo root)
+  gcpm :: git commit and push with message
+   gco :: git checkout with tab completion
    gsu :: git submodule update
-   gsm :: git stash with message
-   gsl :: git stash list
-   gsp :: git stash patch <#>
-   gsa :: git stash apply <#>
-   gsd :: gti stash drop <#>
+  gstm :: git stash with message
+  gstl :: git stash list
+  gstp :: git stash patch <#>
+  gsta :: git stash apply <#>
+  gstd :: gti stash drop <#>
 -----------------------------------------------------------
-
