@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/bin/bash
 
 # shellcheck source=/home/marpauli/.functions.sh
 . ~/.config/aliases/.functions.sh
@@ -8,7 +8,7 @@
 alias ll='ls -la --color=auto'
 # ll in human readable format
 alias lh='ls -lAh'
-# du all items in folder, human readable
+# du all items in folder, human readable 
 alias dh='du -chs *'
 # grep shorthand
 alias g='grep'
@@ -37,8 +37,9 @@ alias r2r='/home/marpauli/code/elvis/SyncSuite/rsync_to_remote.py -cd /home/marp
 alias rfm='/home/marpauli/code/elvis/SyncSuite/file_map.py -cd /home/marpauli/code/sync_config/cml'
 # Test Path Convertor tool
 alias tpc='/home/marpauli/.cache/pypoetry/virtualenvs/test-path-converter-1xglui3r-py3.12/bin/python3 /home/marpauli/code/TestPathConverter/test_path_converter.py'
-# run multiple tests silently from 'paths' file
-alias rmt='for path in $(~/code/TestPathConverter/get_multiple_paths.py paths); do echo "$path"; pytest -qq --disable-warnings --tb=no "$path"; done'
+# run multiple tests silently from 'paths' file (bash only!)
+alias rmt="bash -c 'source /home/marpauli/.config/aliases/.functions.sh; run_multiple_tests'"
+# alias rmt=run_multiple_tests
 # edit 'paths' file from 'rmt'
 alias rmte='nv ~/code/TestPathConverter/paths'
 # run pre-commit on changed files only
@@ -60,7 +61,7 @@ fi
 if [ -f ~/.config/aliases/.custom_aliases ]; then
   . ~/.config/aliases/.custom_aliases
 fi
-# source git aliases, if current shell is bash
-if [ -n "$BASH_VERSION" ]; then
+# source git aliases
+if [ -f ~/.config/aliases/.git_aliases ]; then
   . ~/.config/aliases/.git_aliases
 fi

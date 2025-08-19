@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/bin/bash
 
 # alias neovim, so it can be used in .aliases straight away
 # and won't mess aliases help
@@ -92,9 +92,7 @@ display_alias_descriptions() {
   echo ""
   fill_line_with_string "BASH ALIASES DESCRIPTIONS" "$line_length" " "
   get_alias_descriptions ~/.config/aliases/.aliases
-  if [ -n "$BASH_VERSION" ]; then
-    get_alias_descriptions ~/.config/aliases/.git_aliases
-  fi
+  get_alias_descriptions ~/.config/aliases/.git_aliases
   get_alias_descriptions ~/.config/aliases/.local_aliases
   get_alias_descriptions ~/.config/aliases/.custom_aliases
   fill_line "$line_length" "-"
@@ -148,4 +146,19 @@ activate_poetry_env() {
   else
     source "$env/bin/activate"
   fi
+}
+
+# run multiple test from 'paths' file
+# zsh is using different approach to command substitution, so it needs to
+# run in bash. See '.aliases'.
+run_multiple_tests() {
+  paths=()
+  while IFS= read -r line; do
+    paths+=("$line")
+  done < <(/home/marpauli/code/TestPathConverter/get_multiple_paths.py paths)
+  for path in "${paths[@]}"; do
+    echo "$path"
+    pytest -qq --disable-warnings --tb=no "$path"
+  done
+  e_succ "ALL TESTS FINISHED!"
 }

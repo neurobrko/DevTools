@@ -1,47 +1,12 @@
 #!/bin/bash
 
 # GIT FUNCTIONS
-# git diff with optional filename from git diff --names-only | nl
-git_diff_numbered() {
-  if [ $# -eq 0 ]; then
-    git diff
-  elif [ $# -eq 1 ]; then
-    if [[ $1 =~ ^[0-9]+$ ]]; then
-      local file
-      file=$(git diff --name-only | nl | awk -v num="$1" '$1 == num {print $2}')
-      git diff "$file"
-    elif [[ $1 == "n" ]]; then
-      git diff --name-only | nl
-    fi
-  fi
-}
 
 # git checkout with tab completion
-gc() {
-  git checkout "$@"
-}
-# Enable git completion if available
-if [ -f /usr/share/bash-completion/completions/git ]; then
-  . /usr/share/bash-completion/completions/git
+# bash override for zsh gco alias
+if [ -n "$BASH_VERSION" ] && [ -f ~/.config/aliases/.git_bash_autocomplete ]; then
+  . ~/.config/aliases/.git_bash_autocomplete
 fi
-# Enable git branch completion for gc
-if type __git_complete &>/dev/null; then
-  __git_complete gc _git_checkout
-fi
-
-# git add untracked files, commit and push
-git_commit_push() {
-  if [ -z "$1" ]; then
-    e_err "No commit message provided!"
-    return 1
-  else
-    local message="$*"
-    git add .
-    git commit -m "$message"
-    git push
-    e_succ -e "\nCommit '$message' succesfully pushed to branch: '$(git branch --show-current)'."
-  fi
-}
 
 # git create stast with message
 git_stash_msg() {
@@ -91,35 +56,82 @@ git_stash_drop() {
     e_warn "Please specify only one stash number!"
     return 1
   else
-    read -rp "Are you sure you want to drop stash #$1? (y/N): " confirm
+    printf "Are you sure you want to drop stash #$1? (y/N): "
+    read -r confirm
     if [[ "$confirm" =~ ^[yY]$ ]]; then
       git stash drop stash@"{$1}"
     fi
-    e_warn "Stash #$1 not dropped."
+    e_info "Stash #$1 dropped."
     return 0
   fi
 }
 
+# git diff with optional filename from git diff --names-only | nl
+git_diff_numbered() {
+  local files file
+  files=$(git diff --name-only)
+  if [ $# -eq 0 ]; then
+    printf "%s\n" "${files[@]}" | nl
+  elif [ $# -eq 1 ] && [[ $1 =~ ^[0-9]+$ ]]; then
+    file="${files[$1]}"
+    [ -n "$file" ] && git diff "$file"
+  fi
+}
+
+# git add untracked files, commit and push
+git_commit_push() {
+  if [ -z "$1" ]; then
+    e_err "No commit message provided!"
+    return 1
+  else
+    local message="$*"
+    git add .
+    git commit -m "$message"
+    git push
+    e_succ -e "\nCommit '$message' succesfully pushed to branch: '$(git branch --show-current)'."
+  fi
+}
+
+# git list stashes
+git_stash_list() {
+  printf "%s\n" "$(git stash list)"
+}
+
 ### Git aliases
 # git status
-alias gi='git status'
-# git diff (n files with #, <#> single file)
-alias gd=git_diff_numbered
+fake_alias gst
+if [ -n "$BASH_VERSION" ]; then
+  # git status
+  alias gst='git status'
+fi
 # git fetch all
-alias gf='git fetch --all'
-# git checkout with tab completion
-fake_alias gc
+fake_alias gfa
+if [ -n "$BASH_VERSION" ]; then
+  alias gfa='git fetch --all --prune'
+fi
+# git diff
+fake_alias gd
+if [ -n "$BASH_VERSION" ]; then
+  alias gd='git diff'
+fi
+# git diff numbered (with filenum works only in repo root)
+alias gdn=git_diff_numbered
 # git commit and push with message
-alias gcp=git_commit_push
+alias gcpm=git_commit_push
+# git checkout with tab completion
+fake_alias gco
 # git submodule update
-alias gsu='git submodule update'
+fake_alias gsu
+if [ -n "$BASH_VERSION" ]; then
+  alias gsu='git submodule update'
+fi
 # git stash with message
-alias gsm=git_stash_msg
+alias gstm=git_stash_msg
 # git stash list
-alias gsl='git stash list'
+alias gstl=git_stash_list
 # git stash patch <#>
-alias gsp=git_stash_patch
+alias gstp=git_stash_patch
 # git stash apply <#>
-alias gsa=git_apply_stash
+alias gsta=git_apply_stash
 # gti stash drop <#>
-alias gsd=git_stash_drop
+alias gstd=git_stash_drop
