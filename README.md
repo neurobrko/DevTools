@@ -5,7 +5,8 @@
 author: *Marek Paulík*
 
 > **DISCLAIMER:**\
-> Most of these scripts are makeshift with some caveats and are not working 100% without error. They were mostly made in a rush and are constantly improved...
+> Most of these scripts are makeshift with some caveats and are not working 100% without error. They were mostly made in a rush and are constantly improved...\
+> I recently switched to zsh (with git plugin), so all the aliases and scripts should work both in bash and zsh.
 
 **Best way to utilize these scripts is to make some useful aliases on your local system.**
 
@@ -45,6 +46,7 @@ For example, if you press `h`, you get aliases description:
    dh :: du all items in folder, human readable
   cdb :: cd to $BASE_DIR
   cdl :: cd to virl2 log dir
+  cdw :: cd to webserver dir
   cds :: cd to site_packages
    lw :: get single word from output
     h :: print alias descriptions
@@ -68,9 +70,10 @@ For example, if you press `h`, you get aliases description:
 ------------------------------------------------------------
 ```
 
-There is also a alternative display of prompt (without username, hostname is shorted and host part of bridge0 IP is in parenthesis, displaying only top directory and some colors):
+There is also a alternative display of prompt (without username, hostname is
+shorted and host part of bridge0 IP is in parenthesis, displaying only top
+directory and some colors):
 `S-7881-C0 (165):site-packages#`\
-`gc` alias for `git checkout` also work with `TAB` completion!
 
 **LOCAL/CUSTOM bash aliases**\
 You can create custom local aliases in `.local_aliases` or `.custom_aliases` files.\
@@ -83,7 +86,14 @@ Shows the IP of interface put in script and copies it to clipboard.
 
 ## local_bash_aliases
 
-As mentioned before, best way to use these scripts is to create some local aliases. This is a taste of aliases I use daily locally.
+As mentioned before, best way to use these scripts is to create some local
+aliases. This is a taste of aliases I use daily locally.\
+I've set git aliases to correspond with aliases created by zsh git plugin.
+Most of them are pretty standard. `gco` work also with `<TAB>` autocompletion.
+`gdn` ads a nice touch to git diff. It prints all changed files as numbered list
+and you can then use `gdn #` for diff only for single file. Combine it with `xc`
+and your patch is right in your clipboard. Also all `git stash` aliases are
+slightly modified to make use of numbered list of stashes.
 
 ```
                  BASH ALIASES DESCRIPTIONS                 
